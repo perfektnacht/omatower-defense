@@ -52,6 +52,8 @@ ShellRoot {
             ["fgDim on panel",    t.fgDim,    t.bgPanel,  4.5],
             ["fgBright on panel", t.fgBright, t.bgPanel,  4.5],
             ["fg on bg",          t.fg,       t.bg,       4.5],
+            ["fg on raised",      t.fg,       t.bgRaised, 4.5],
+            ["fgDim on raised",   t.fgDim,    t.bgRaised, 4.5],
             ["fgDim on lift",     t.fgDim,    t.bgLift,   3.0],
             ["accentInk on accent", t.accentInk, t.accent,  4.5]
         ];
@@ -122,10 +124,14 @@ ShellRoot {
         // the light-mode and greyscale cases get graded without installing
         // them: no Omarchy theme in the wild is light yet, and those are
         // precisely the palettes most likely to break the art.
+        // Both theme roots. Grading only ~/.config/omarchy/themes was grading
+        // four themes while twenty-two shipped ones went unchecked, which is
+        // how a light theme with unreadable shop cards got through.
         command: ["bash", "-lc",
-                  "for d in ~/.config/omarchy/themes/*/ ${EXTRA:+$EXTRA/*/}; do " +
+                  "for d in ${OMARCHY_PATH:-/usr/share/omarchy}/themes/*/ " +
+                  "         ~/.config/omarchy/themes/*/ ${EXTRA:+$EXTRA/*/}; do " +
                   "  [ -f \"$d/colors.toml\" ] && echo \"$(basename $d)|$d/colors.toml\"; " +
-                  "done"]
+                  "done | sort -u -t'|' -k1,1"]
         stdout: StdioCollector {
             onStreamFinished: {
                 const found = [];

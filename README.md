@@ -163,6 +163,22 @@ run `omarchy theme set` and the game recolours without a reload. Both schemas ar
 read (the named one and the older `color0..color15`), along with Aether's
 `mode = "light" | "dark"`.
 
+**Switching repeatedly works.** `omarchy-theme-set` does not edit `colors.toml`,
+it does `rm -rf` on the theme directory and `mv`s a new one into place, so every
+switch hands over a brand new inode. A file watch is attached to an inode, not a
+path: the first switch kills the watch along with the old file and every switch
+after it goes unnoticed. Worse, a read landing between the `rm` and the `mv`
+returns nothing, and a naive reader collapses to its built-in fallback and stays
+there. So the watch is re-armed when it fires, a one-second poll backs it up, and
+an empty read is never allowed to overwrite a good palette.
+
+The whole palette also resolves in a **single binding**. It used to be a chain
+(`raw → themeHues → concentration → collapsed → roles → red`), and QML
+invalidates a chain by pushing change signals through it — a lazy link nobody has
+read yet never fires, so everything downstream keeps serving cached values. The
+symptom was a half-applied theme: backgrounds and text switched instantly while
+every car and every take kept the previous theme's colours.
+
 A terminal palette does not owe a tower defense two things it needs, so the game
 derives them:
 
@@ -181,18 +197,27 @@ variance of its hues, weighted by the chroma each actually carries.
 - **Zero chroma** → separated by lightness alone. Painting a rainbow over a
   deliberately greyscale theme would be vandalism.
 
-**Text that survives its background.** Every text-on-surface pair the game
-actually draws is held to WCAG AA, and a colour is only touched when it really
-fails — a well-authored theme passes through untouched. Filled controls get
-`Theme.accentInk`, derived rather than picked, because a mid-tone accent can be
-too dark for the background colour *and* too light for the foreground one.
+**Text that survives its background.** Every text role is held to WCAG AA
+against *every* surface it is drawn on — `bg`, `bgPanel`, `bgRaised`, `bgLift` —
+not just one of them, and correction tries both directions rather than assuming
+away-from-the-background is the way out. A mid-tone accent can be unreachable
+toward white and comfortable toward black. A colour is only touched when it
+really fails; a well-authored theme passes through untouched.
 
-`tools/dev.sh themecheck` grades every theme installed on the machine plus the
-fixtures in `tools/themes/` (light, monochrome-light, greyscale), printing the
+**Surfaces have to stay on the background's side.** Some shipped themes define
+only `foreground`, `background` and `selection`, and `selection` is often a
+near-white highlight meant to carry dark text. Used as a panel on a near-black
+theme it produces a surface no text colour can satisfy alongside the real
+background. Anything that far out of line with the theme's mode is derived from
+the background instead of used as-is.
+
+`tools/dev.sh themecheck` grades every theme Omarchy ships **and** every theme
+you have installed **and** the fixtures in `tools/themes/` (light,
+monochrome-light, greyscale) — 29 palettes on a stock machine. It prints the
 resolved mode, the contrast ratio and grade for each pair, the seven resolved
-hues, and the closest pair among them. It holds themes to the same threshold the
-code enforces, because a harness grading against a different bar is worse than
-no harness.
+hues, and the closest pair among them, and holds themes to the same threshold the
+code enforces, because a harness grading against a different bar is worse than no
+harness.
 
 ## Layout
 

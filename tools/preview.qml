@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import "game"
 
 // Dev harness: renders the game offscreen-ish, drives a scripted scenario, and
@@ -116,6 +117,35 @@ ShellRoot {
                         endLater.start();
                     }
                 }
+            }
+
+            // SWITCHES=a,b,c cycles real themes mid-run and grabs a frame shortly
+            // after each, which is the only way to prove the whole palette
+            // lands in one frame rather than in two.
+            Timer {
+                id: themeCycle
+                property var names: (Quickshell.env("SWITCHES") || "").split(",").filter(n => n !== "")
+                property int at: 0
+                running: names.length > 0
+                interval: 2500
+                repeat: true
+                onTriggered: {
+                    if (at >= names.length) { running = false; return; }
+                    switcher.command = ["omarchy", "theme", "set", names[at]];
+                    switcher.running = true;
+                    at += 1;
+                    grabSoon.restart();
+                }
+            }
+
+            Process { id: switcher }
+
+            Timer {
+                id: grabSoon
+                interval: 400
+                onTriggered: scene.grabToImage(
+                    r => r.saveToFile(Quickshell.env("SHOT").replace(".png", "-" + themeCycle.at + ".png")),
+                    Qt.size(scene.width, scene.height))
             }
 
             Timer {
