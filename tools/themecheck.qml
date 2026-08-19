@@ -130,7 +130,12 @@ ShellRoot {
         command: ["bash", "-lc",
                   "for d in ${OMARCHY_PATH:-/usr/share/omarchy}/themes/*/ " +
                   "         ~/.config/omarchy/themes/*/ ${EXTRA:+$EXTRA/*/}; do " +
-                  "  [ -f \"$d/colors.toml\" ] && echo \"$(basename $d)|$d/colors.toml\"; " +
+                  "  [ -f \"$d/colors.toml\" ] || continue; " +
+                  // Parameter expansion rather than $(basename $d): the name is
+                  // never re-split, so a theme directory with a space in it
+                  // still resolves to one theme.
+                  "  n=${d%/}; n=${n##*/}; " +
+                  "  printf '%s|%s\\n' \"$n\" \"$d/colors.toml\"; " +
                   "done | sort -u -t'|' -k1,1"]
         stdout: StdioCollector {
             onStreamFinished: {
