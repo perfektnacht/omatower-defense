@@ -471,6 +471,8 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             visible: hud.width > 1380
             text: Theme.themeName
+            // Untrusted: comes from theme.name on disk. Never AutoText.
+            textFormat: Text.PlainText
             font.family: Theme.mono
             font.pixelSize: Theme.fsCaption
             font.letterSpacing: 1

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Push local edits into the running omarchy-shell, then prove they landed.
 #
-# You never need to reinstall: install.sh symlinks this checkout into
-# ~/.config/omarchy/plugins/, so the files are already live. All that is needed
-# is for the shell to re-read them. The catch is that the shell's auto-reload
-# watcher does not follow the symlink out to this directory, so it has to be
-# told — that is what this does.
+# You never need to reinstall: a symlink install points
+# ~/.config/omarchy/plugins/ at this checkout, so the files are already live.
+# All that is needed is for the shell to re-read them. The catch is that the
+# shell's auto-reload watcher does not follow the symlink out to this
+# directory, so it has to be told — that is what this does.
 #
 #   tools/reload.sh          hot reload, verified; falls back to a restart
 #   tools/reload.sh --soft   hot reload only, never restart

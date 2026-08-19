@@ -328,6 +328,8 @@ Item {
                 text: (start.showWorkspaceHint
                        ? "Enter to start  ·  Esc to quit  ·  switch workspace to hide  ·  build "
                        : "Enter to start  ·  Esc to quit  ·  build ") + Build.stamp
+                // Contains file-derived text. Never AutoText.
+                textFormat: Text.PlainText
                 font.family: Theme.mono
                 font.pixelSize: 10
                 font.letterSpacing: 1

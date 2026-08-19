@@ -22,10 +22,12 @@ came from `colors.toml`.</sub>
 omarchy plugin add https://github.com/perfektnacht/omatower-defense --enable
 ```
 
-Or, to hack on it, symlink the checkout into your plugins directory:
+Or, to hack on it, symlink the checkout into your plugins directory and
+enable it:
 
 ```bash
-./install.sh
+ln -s "$PWD" ~/.config/omarchy/plugins/perfektnacht.omatower-defense
+omarchy plugin enable perfektnacht.omatower-defense
 ```
 
 Open it with the car icon in the bar, or bind a key to:
@@ -56,9 +58,9 @@ qs -p .
 omarchy plugin remove perfektnacht.omatower-defense
 ```
 
-That disables it and deletes the plugin directory. If you installed with
-`./install.sh`, the plugin directory is a symlink to your checkout, so remove
-the link and leave the checkout alone:
+That disables it and deletes the plugin directory. If you installed by hand
+with the symlink above, the plugin directory is a link to your checkout, so
+remove the link and leave the checkout alone:
 
 ```bash
 omarchy plugin disable perfektnacht.omatower-defense
@@ -274,11 +276,12 @@ tools/dev.sh preview 3     # play a circuit (0-4), screenshots to $SHOT
 tools/dev.sh artcheck      # every car and creature, side by side
 tools/dev.sh monotest      # each damage car played solo, to compare them
 tools/dev.sh themecheck    # every installed theme + fixtures, graded
+tools/dev.sh safetext      # untrusted file text cannot become rich text
 ```
 
-**You never need to reinstall.** `install.sh` symlinks this checkout into the
-plugins directory, so the files the shell reads are always the files you just
-edited. Only the shell's *in-memory* copy goes stale.
+**You never need to reinstall.** A symlink install points the plugins
+directory at this checkout, so the files the shell reads are always the files
+you just edited. Only the shell's *in-memory* copy goes stale.
 
 Saving a file under `~/.config/omarchy/plugins/` normally hot-reloads it, but
 the watcher does not follow the symlink out to this directory, so after editing:

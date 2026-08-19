@@ -50,9 +50,25 @@ Singleton {
     property var raw: ({})
     property string rawText: ""
 
+    // theme.name is read straight off disk, so it is hostile input: anyone who
+    // can write that file picks this string. QML's Text defaults to AutoText,
+    // which sniffs for markup and silently upgrades to rich text -- and rich
+    // text resolves <img src="...">, pulling local files or remote URLs from
+    // the shell process. Render sites pin textFormat to PlainText; stripping it
+    // here as well means a future render site cannot reintroduce the hole.
     readonly property string themeName: {
-        const t = nameFile.text().trim();
+        const t = root.oneLine(nameFile.text());
         return t === "" ? "unknown" : t;
+    }
+
+    // Flattens untrusted file text to something inert: no control characters,
+    // nothing Qt's rich-text sniffer keys on, and short enough that a large
+    // file cannot push the rest of the bar off screen.
+    function oneLine(s: string): string {
+        return (s || "").replace(/[\x00-\x1f\x7f]/g, " ")
+                        .replace(/[<>&]/g, "")
+                        .slice(0, 48)
+                        .trim();
     }
 
     function refresh(): void {
