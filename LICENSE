@@ -19,3 +19,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+External dependencies
+
+Omatower Defense vendors no third-party code. Everything under game/ is original
+QML written for this plugin: no sprite sheets, no fonts, no bundled libraries,
+no binaries. The MIT grant above covers the whole repository.
+
+It runs against software Omarchy already ships, and installs none of it:
+
+  Omarchy 4+ (omarchy-shell, omarchy CLI)   MIT            Plugin host
+  Quickshell                                LGPL-3.0-only  QML runtime
+  Qt 6 (QtQuick)                            LGPL-3.0-only  Rendering, via Quickshell
+
+Quickshell and Qt are used as unmodified system libraries through QML imports;
+neither is redistributed here.
+
+Runtime file access is read-only and limited to the current theme:
+
+  ~/.local/state/omarchy/current/theme/colors.toml
+  ~/.local/state/omarchy/current/theme.name
+
+The plugin writes nothing outside its own install directory, and holds no
+network, credential or user-configuration access of any kind.
+
+Weapon names and the glyph effects they draw are modelled on Omarchy's ttfx
+screensaver (MIT). Circuit layouts are stylised originals authored in
+game/Balance.qml, not traced or imported data.
+

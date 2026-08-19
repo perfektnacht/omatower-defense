@@ -11,6 +11,11 @@ screensaver: `binarypath`, `matrix`, `laseretch`, `fireworks`, `blackhole`.
 Everything is drawn in QML — no sprite sheets, no assets — and the whole game
 recolours itself from your current Omarchy theme, light or dark.
 
+![Omatower Defense at Spa-Francorchamps: Quattros parked around the lap, a laseretch beam through the pack](preview.png)
+
+<sub>Spa-Francorchamps, wave 14, under the Ethereal theme. Every colour on screen
+came from `colors.toml`.</sub>
+
 ## Install
 
 ```bash
@@ -44,6 +49,25 @@ It also runs as a plain window on any Quickshell install:
 ```bash
 qs -p .
 ```
+
+## Removal
+
+```bash
+omarchy plugin remove perfektnacht.omatower-defense
+```
+
+That disables it and deletes the plugin directory. If you installed with
+`./install.sh`, the plugin directory is a symlink to your checkout, so remove
+the link and leave the checkout alone:
+
+```bash
+omarchy plugin disable perfektnacht.omatower-defense
+rm ~/.config/omarchy/plugins/perfektnacht.omatower-defense
+```
+
+Nothing else to clean up: the game writes no config, no save files and no state
+outside its own plugin directory. It only ever *reads* your theme from
+`~/.local/state/omarchy/current/theme/`.
 
 ## Controls
 
