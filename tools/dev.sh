@@ -62,3 +62,8 @@ cd "$stage"
 timeout "${RUNFOR:-30}" qs -p "./$harness.qml" 2>&1 | sed 's/\x1b\[[0-9;]*m//g' | grep -v "qt.qpa.services" || true
 echo "harness: $stage"
 [ -f "$SHOT" ] && echo "shot:    $SHOT"
+
+# The qs run above is judged by what it prints -- line 62 already discards its
+# status -- so don't let the screenshot probe become this script's exit code.
+# A harness that writes no image (safetext, simtest) is not a failure.
+exit 0
